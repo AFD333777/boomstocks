@@ -49,8 +49,7 @@ def addCrypto(update, context):
 
 
 def start():
-    # 1619648579:AAFZ15uTggnT94_aupP9h0byM5ErkoyRVrs
-    updater = Updater("1764984239:AAGcPAVr_PNkUwsx_FXlQQi3lB_ey9Hfuj8", use_context=True)
+    updater = Updater("1619648579:AAFZ15uTggnT94_aupP9h0byM5ErkoyRVrs", use_context=True)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler("start", greeting))
     dp.add_handler(CommandHandler("stocks", getStocks))
