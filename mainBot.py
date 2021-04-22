@@ -1,10 +1,12 @@
+import pprint
+import telegram
 from telegram.ext import Updater, MessageHandler, Filters
 from telegram.ext import CallbackContext, CommandHandler
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 
 ACCESSKEY = "82358a9c66b6a9c130cf8418aa52593f"
-reply_keyboard = [['Акции', 'Криптовалюта']]
-markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=False, resize_keyboard=True)
+reply_keyboard = [['Акции все', 'Криптовалюта'], ['Добавить акцию', 'Добавить криптовалюту']]
+markupMenu = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=False, resize_keyboard=True)
 
 
 def getStocks(update, context):
@@ -17,8 +19,13 @@ def getCrypto(update, context):
 
 
 def greeting(update, context):
+    # проверка есть ли пользователь в боте или нет
     update.message.reply_text("Здравствуйте!\nЯ бот для просмотра информации акций и криптовалют"
-                              "\nВведите /help для получения инструкций", reply_markup=markup)
+                              "\nВведите /help для получения инструкций", reply_markup=markupMenu)
+    update.message.reply_text(
+        "Чтобы воспользоватся ботом, вам нужно предоставить номер телефона и зарегистрироваться на сайте "
+        "https://boomstocks.herokuapp.com указав логин - ваш номер телефона")
+    telegram.keyboardbutton.KeyboardButton("Предоставить")
 
 
 def close_keyboard(update, context):
@@ -39,7 +46,7 @@ def instructions(update, context):
 
 
 def addStock(update, context):
-    update.message.reply_text("Добавили акцию")
+    update.message.reply_text("Добавили акцию чего то")
     pass
 
 
