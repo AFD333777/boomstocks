@@ -83,6 +83,6 @@ def startBot():
 
 if __name__ == '__main__':
     first = Process(target=startBot)
-    # second = Process(target=startSite)
+    second = Process(target=startSite)
     first.start()
-    # second.start()
+    second.start()
