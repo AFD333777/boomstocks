@@ -35,7 +35,6 @@ def instructions(update, context):
     update.message.reply_text(
         """Команды:
 /help - получение инструкций по работе с ботом
-/menu - кнопки главного меню
 /stocks - показать меню акций
 /crypto - показать меню криптовалют
 /addstock - добавить акцию для просмотра
@@ -45,27 +44,29 @@ def instructions(update, context):
     )
 
 
+# /menu - кнопки главного меню
+
 def openMenu(update, context):
-    update.message.reply_text("Выберите функцию:", reply_markup=markupMenu)
+    # update.message.reply_text("Выберите функцию:", reply_markup=markupMenu)
     print(context.user_data[0])
 
 
 def getStocks(update, context):
     # обращение к бд и просмотр избранных акций пользователя
-    print("Выдал кнопки акций")
+    update.message.reply_text("Список акций")
 
 
 def getCrypto(update, context):
-    print("Выдал кнопки криптовалют")
+    update.message.reply_text("Список крптовалют")
 
 
 def addStock(update, context):
-    update.message.reply_text("Добавили акцию чего то")
+    update.message.reply_text("Добавил акцию")
     pass
 
 
 def addCrypto(update, context):
-    update.message.reply_text("Добавили крипту")
+    update.message.reply_text("Добавил криптовалюту")
     pass
 
 
@@ -90,6 +91,6 @@ def start():
     dp.add_handler(CommandHandler("close", closeKeyboard))
     dp.add_handler(CommandHandler("help", instructions))
     dp.add_handler(MessageHandler(Filters.contact, getNumber))
-    dp.add_handler(MessageHandler(Filters.text, getExcuse))
+    # dp.add_handler(MessageHandler(Filters.text, getExcuse))
     updater.start_polling()
     updater.idle()

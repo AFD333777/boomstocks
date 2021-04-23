@@ -72,7 +72,7 @@ def login():
 
 
 def startSite():
-    # db_session.global_init("db/stocks")
+    db_session.global_init("db/stocks")
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
 
