@@ -2,6 +2,9 @@ import telegram
 from telegram.ext import Updater, MessageHandler, Filters
 from telegram.ext import CommandHandler
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
+from data import db_session
+from data.users import User
+import logging
 
 ACCESSKEY = "82358a9c66b6a9c130cf8418aa52593f"
 keyboardMenu = [['Акции все', 'Криптовалюта'], ['Добавить акцию', 'Добавить криптовалюту']]
@@ -17,57 +20,74 @@ def greeting(update, context):
                               "\nВведите /help для получения инструкций", reply_markup=markupConfirm)
     update.message.reply_text(
         "Чтобы воспользоватся ботом, вам нужно предоставить номер телефона и зарегистрироваться на сайте "
-        "https://boomstocks.herokuapp.com, указав логин - ваш номер телефона.\n"
+        "https://boomstocks.herokuapp.com, указав логин - ваш номер телефона в международном формате.\n"
         "Если вы уже зарегистрированы, нажмите 'Предоставить доступ'",
         reply_markup=markupSite)
 
 
 def getNumber(update, context):
-    print(update.message.contact.phone_number)
-    print(update.message.contact.user_id)
-    context.user_data[0] = update.message.contact.phone_number
-    context.user_data[1] = update.message.contact.user_id
-    openMenu(update, context)
-    # запрос к бд, есть ли пользователь
+    context.user_data['phone_number'] = update.message.contact.phone_number
+
+
+def checkUser(number):
+    db_sess = db_session.create_session()
+    if not db_sess.query(User).filter(User.login == number).first():
+        return False
+    else:
+        return True
 
 
 def instructions(update, context):
-    update.message.reply_text(
-        """Команды:
+    if checkUser(context.user_data['phone_number']):
+        update.message.reply_text(
+            """Команды:
 /help - получение инструкций по работе с ботом
 /stocks - показать меню акций
+/menu - кнопки главного меню
 /crypto - показать меню криптовалют
 /addstock - добавить акцию для просмотра
 /addcrypto - добавить криптовалюту для просмотра
 /close - закрыть клавиатуру
-        """
-    )
+            """
+        )
+    else:
+        greeting(update, context)
 
-
-# /menu - кнопки главного меню
 
 def openMenu(update, context):
-    # update.message.reply_text("Выберите функцию:", reply_markup=markupMenu)
-    print(context.user_data[0])
+    if checkUser(context.user_data['phone_number']):
+        update.message.reply_text("Выберите функцию:", reply_markup=markupMenu)
+    else:
+        greeting(update, context)
 
 
 def getStocks(update, context):
-    # обращение к бд и просмотр избранных акций пользователя
-    update.message.reply_text("Список акций")
+    if checkUser(context.user_data['phone_number']):
+        # обращение к бд и просмотр избранных акций пользователя
+        update.message.reply_text("Список акций")
+    else:
+        greeting(update, context)
 
 
 def getCrypto(update, context):
-    update.message.reply_text("Список крптовалют")
+    if checkUser(context.user_data['phone_number']):
+        update.message.reply_text("Список крптовалют")
+    else:
+        greeting(update, context)
 
 
 def addStock(update, context):
-    update.message.reply_text("Добавил акцию")
-    pass
+    if checkUser(context.user_data['phone_number']):
+        update.message.reply_text("Добавил акцию")
+    else:
+        greeting(update, context)
 
 
 def addCrypto(update, context):
-    update.message.reply_text("Добавил криптовалюту")
-    pass
+    if checkUser(context.user_data['phone_number']):
+        update.message.reply_text("Добавил криптовалюту")
+    else:
+        greeting(update, context)
 
 
 def getExcuse(update, context):
@@ -79,10 +99,11 @@ def closeKeyboard(update, context):
 
 
 def start():
+    db_session.global_init("db/stocks")
     updater = Updater("1619648579:AAFZ15uTggnT94_aupP9h0byM5ErkoyRVrs", use_context=True)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler("start", greeting))
-    # если пользователь есть, если нет, то оставляем его на начальном меню
+    dp.add_handler(MessageHandler(Filters.contact, getNumber))
     dp.add_handler(CommandHandler("menu", openMenu))
     dp.add_handler(CommandHandler("stocks", getStocks))
     dp.add_handler(CommandHandler("crypto", getCrypto))
@@ -90,7 +111,5 @@ def start():
     dp.add_handler(CommandHandler("addcrypto", addCrypto))
     dp.add_handler(CommandHandler("close", closeKeyboard))
     dp.add_handler(CommandHandler("help", instructions))
-    dp.add_handler(MessageHandler(Filters.contact, getNumber))
-    # dp.add_handler(MessageHandler(Filters.text, getExcuse))
     updater.start_polling()
     updater.idle()

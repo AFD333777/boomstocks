@@ -1,2 +1,7 @@
-flask
+flask~=1.1.2
 python-telegram-bot
+SQLAlchemy~=1.4.10
+phonenumbers~=8.12.21
+Werkzeug~=1.0.1
+WTForms~=2.3.3
+telegram
