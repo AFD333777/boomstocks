@@ -1,9 +1,8 @@
-import datetime
 import sqlalchemy
 from .db_session import SqlAlchemyBase
 
 
-class User(SqlAlchemyBase):
+class Ticker(SqlAlchemyBase):
     __tablename__ = 'tickers'
 
     id = sqlalchemy.Column(sqlalchemy.Integer,

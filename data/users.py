@@ -8,7 +8,6 @@ import phonenumbers
 
 class User(SqlAlchemyBase, UserMixin):
     __tablename__ = 'users'
-
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
     login = sqlalchemy.Column(sqlalchemy.String, nullable=False, unique=True)
@@ -17,10 +16,10 @@ class User(SqlAlchemyBase, UserMixin):
     created_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                      default=datetime.datetime.now)
 
-    def set_password(self, password):
+    def setPassword(self, password):
         self.hashed_password = generate_password_hash(password)
 
-    def check_password(self, password):
+    def checkPassword(self, password):
         return check_password_hash(self.hashed_password, password)
 
     def checkNumber(self, number):
